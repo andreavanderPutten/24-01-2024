@@ -16,6 +16,7 @@ class Controller:
 
 
 
+
     def handle_graph(self, e):
         a = self._view.dd_anno.value
         m = self._view.dd_ordinazione.value

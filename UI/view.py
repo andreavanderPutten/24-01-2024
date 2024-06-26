@@ -1,5 +1,5 @@
 import flet as ft
-from database.DAO import DAO
+
 
 class View(ft.UserControl):
     def __init__(self, page: ft.Page):
@@ -13,42 +13,47 @@ class View(ft.UserControl):
         self._controller = None
         # graphical elements
         self._title = None
+        self._ddyear = None
+        self._ddmethod = None
+        self.btn_graph = None
+        self.txtOut = None
+        self.txt_container = None
 
-        self.dd_ordinazione = None
-        self.dd_anno = None
-        self.txt_valore = None
-        self.btn_crea_grafo = None
-        self.btn_percorso = None
-        self.txt_soglia = None
-        self.listMetodi = DAO.getAllMetodi()
-        self.listaAnni = DAO.getAllAnni()
-
-
+        self._ddnode = None
+        self.btn_search = None
+        self.txtOut2 = None
 
     def load_interface(self):
         # title
-        self._title = ft.Text("TdP 2024 - 24-01-24: Prova tema d'esame", color="blue", size=24)
+        self._title = ft.Text("TdP 2024 - Lab11: Prova tema d'esame", color="blue", size=24)
         self._page.controls.append(self._title)
 
-        self.dd_ordinazione = ft.Dropdown(label="Ordine")
-        self.dd_anno  = ft.Dropdown(label="Anno")
-        self.btn_percorso = ft.ElevatedButton(text="Calcola percorso", on_click=self._controller.handle_path)
-        self.btn_crea_grafo = ft.ElevatedButton(text="crea grafo",on_click=self._controller.handle_graph)
-        self.txt_soglia = ft.TextField(label="soglia")
-        row1 = ft.Row([self.dd_ordinazione, self.dd_anno, self.btn_crea_grafo,self.btn_percorso,self.txt_soglia],
+        #ROW with some controls
+        # text field for the name
+        self._ddyear = ft.Dropdown(label="Anno")
+        self._ddmethod = ft.Dropdown(label="Metodo")
+        self._txtSoglia = ft.TextField(label="Soglia")
+
+        # button for the "creat graph" reply
+        self.btn_graph = ft.ElevatedButton(text="Crea Grafo", on_click=self._controller.handle_graph)
+        row1 = ft.Row([self._ddyear,self._ddmethod, self._txtSoglia],
                       alignment=ft.MainAxisAlignment.CENTER)
         self._page.controls.append(row1)
-        self._page.update()
 
+        self._controller.fillDD()
+
+        # List View where the reply is printed
         self.txtOut = ft.ListView(expand=1, spacing=10, padding=10, auto_scroll=True)
         self._page.controls.append(self.txtOut)
 
-        for t in self.listMetodi :
-            self.dd_ordinazione.options.append(ft.dropdown.Option(t))
+        self.btn_search = ft.ElevatedButton(text="Cerca Percorso", on_click=self._controller.handle_search)
+        row2 = ft.Row([self.btn_graph, self.btn_search], alignment=ft.MainAxisAlignment.CENTER)
+        self._page.controls.append(row2)
 
-        for anno in self.listaAnni :
-            self.dd_anno.options.append(ft.dropdown.Option(anno))
+        self.txtOut2 = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
+        self._page.controls.append(self.txtOut2)
         self._page.update()
+
     @property
     def controller(self):
         return self._controller
@@ -68,6 +73,3 @@ class View(ft.UserControl):
 
     def update_page(self):
         self._page.update()
-
-
-

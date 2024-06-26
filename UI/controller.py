@@ -1,5 +1,7 @@
 import flet as ft
-from database.DAO  import DAO
+
+from database.DAO import DAO
+
 
 class Controller:
     def __init__(self, view, model):
@@ -7,26 +9,29 @@ class Controller:
         self._view = view
         # the model, which implements the logic of the program and holds the data
         self._model = model
+        self._listYear = []
+        self._listColor = []
+
     def fillDD(self):
-        metodi = DAO.getAllMetodi()
-        anni = DAO.getAllAnni()
+        metodi = DAO.getMetodi()
+        anni = DAO.getAnni()
 
-
-
-
-
-
+        self._view._ddmethod.options = list(map(lambda x: ft.dropdown.Option(key=x[0], text=x[1]), metodi))
+        self._view._ddyear.options = list(map(lambda x: ft.dropdown.Option(x), anni))
 
     def handle_graph(self, e):
-        a = self._view.dd_anno.value
-        m = self._view.dd_ordinazione.value
-        self._model.buildGraph(a,m)
+        anno = int(self._view._ddyear.value)
+        metodo = int(self._view._ddmethod.value)
+        if float(self._view._txtSoglia.value) < 0:
+            self._view.create_alert("vaffanculo")
+            return
+        else:
+            soglia = float(self._view._txtSoglia.value)
 
-        self._view.txtOut.controls.append(ft.Text(f"Numero di vertici: {self._model.getNumNodes()} Numero di archi: {self._model.getNumEdges()}"))
+        self._model.creaGrafo(anno, metodo, soglia)
 
+        self._view.txtOut.controls.append(ft.Text(f"nodi: {self._model.grafoDetails()[0]}, archi {self._model.grafoDetails()[1]}"))
         self._view.update_page()
-    def handle_volume(self, e):
-        pass
 
-    def handle_path(self, e):
+    def handle_search(self, e):
         pass

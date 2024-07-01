@@ -31,3 +31,20 @@ class Model:
                 lista.append((self.grafo.in_degree(nodo), nodo))
         lista.sort(reverse=True)
         return lista
+
+    def trovaPercorso(self):
+        self.soluzioneBest = []
+        for nodo in self.grafo.nodes:
+            if self.grafo.in_degree(nodo) == 0:
+                self.ricorsione([nodo])
+        return self.soluzioneBest
+
+    def ricorsione(self, parziale):
+        if self.grafo.out_degree(parziale[-1]) == 0:
+            if len(parziale) > len(self.soluzioneBest):
+                self.soluzioneBest = copy.deepcopy(parziale)
+        else:
+            for nodo in self.grafo.neighbors(parziale[-1]):
+                parziale.append(nodo)
+                self.ricorsione(parziale)
+                parziale.pop()
